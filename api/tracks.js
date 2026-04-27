@@ -19,7 +19,13 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next ) => {
     try{
         const{id} = req.params;
+        if(isNaN(id)){
+            return res.status(400).send("We need a number");
+        }
         const result = await db.query(`SELECT * FROM tracks WHERE id = $1`,[id])
+        if(!result.rows[0]){
+            return res.status(404).send("Track was not found");
+        }
         res.send(result.rows[0]);
     } catch(err){
         next(err)
